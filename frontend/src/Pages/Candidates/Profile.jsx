@@ -194,7 +194,7 @@ const CandidateProfile = () => {
       name: payload.name || "",
       email: payload.email || "",
       phone: payload.phone || "",
-      location: payload.location || "",
+      location: payload.location || payload.address || "",
       dob: normalizeDateForInput(payload.dob),
       experience: payload.experience || "",
       jobType: payload.job_type || payload.jobType || "",
