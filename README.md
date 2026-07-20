@@ -347,6 +347,20 @@ The frontend nginx container proxies API calls from `/api` to `backend:5000`.
 
 ---
 
+## **Vercel Deployment**
+
+The frontend can be easily deployed to Vercel for free global CDN hosting.
+
+1. **Vercel Routing Config**: The `vercel.json` file handles Single Page Application routing (rewrites everything to `index.html`).
+2. **Deploy via Vercel Dashboard**:
+   - Import the repository.
+   - Set **Framework Preset** to `Vite`.
+   - Set **Root Directory** to `frontend`.
+   - Add Environment Variable: `VITE_API_URL` pointing to your deployed backend (e.g., Render/Railway).
+   - Click Deploy.
+
+---
+
 ## **API Overview**
 
 Main route groups:
