@@ -144,10 +144,24 @@ export const applicationRepository = {
 
   findById: async (id) => {
     const result = await pool.query(
-      `SELECT a.*, c.name as candidate_name, c.email as candidate_email, j.title as job_title
+      `SELECT
+          a.*,
+          c.name AS candidate_name,
+          c.email AS candidate_email,
+          c.phone AS candidate_phone,
+          c.skills AS candidate_skills,
+          c.experience AS candidate_experience,
+          j.title AS job_title,
+          j.description AS job_description,
+          j.responsibilities AS job_responsibilities,
+          j.requirements AS job_requirements,
+          j.experience AS job_experience,
+          j.employment_type,
+          r.company_name
        FROM applications a
        JOIN candidates c ON a.candidate_id = c.id
        JOIN job_posts j ON a.job_post_id = j.id
+       JOIN recruiters r ON j.recruiter_id = r.id
        WHERE a.id = $1`,
       [id]
     );

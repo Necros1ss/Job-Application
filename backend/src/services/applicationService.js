@@ -126,6 +126,25 @@ export const applicationService = {
   getApplicationForRecruiter: async (id, recruiterId) => {
     const application = await applicationRepository.findByIdForRecruiter(id, recruiterId);
     if (!application) throw new Error("Application not found");
+
+    // Nếu hồ sơ chưa từng được AI phân tích, tự động kích hoạt phân tích ngay lập tức
+    if (application.ai_score === null || application.ai_score === undefined) {
+      if (application.cv_file_name || application.cv_file_path) {
+        try {
+          const aiResult = await analyzeApplication(application);
+          await applicationRepository.updateAiScreening(id, aiResult);
+          application.ai_score = aiResult.score;
+          application.ai_recommendation = aiResult.recommendation;
+          application.ai_summary = aiResult.summary;
+          application.ai_strengths = aiResult.strengths;
+          application.ai_weaknesses = aiResult.weaknesses;
+          application.ai_screened_at = new Date();
+        } catch (aiErr) {
+          console.error(`Automatic on-the-fly AI screening error for app #${id}:`, aiErr.message);
+        }
+      }
+    }
+
     return {
       ...application,
       candidateId: application.candidate_id,
