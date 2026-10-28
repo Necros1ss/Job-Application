@@ -172,7 +172,13 @@ const startServer = async () => {
   });
 };
 
-startServer().catch((error) => {
-  logger.error(`Failed to start API server: ${error.message}`);
-  process.exit(1);
-});
+export { app };
+
+const isMain = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);
+
+if (isMain && process.env.NODE_ENV !== "test") {
+  startServer().catch((error) => {
+    logger.error(`Failed to start API server: ${error.message}`);
+    process.exit(1);
+  });
+}

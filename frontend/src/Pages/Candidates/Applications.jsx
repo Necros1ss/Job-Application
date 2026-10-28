@@ -178,34 +178,34 @@ const Applications = ({ initialTab = "all" }) => {
   // Helper tạo màu cho Status Badge
   const getBadgeStyle = (status) => {
     const displayStatus = getApplicationDisplayStatus(status);
-    if (isInterviewStatus(status)) return 'bg-blue-100 text-blue-700';
-    if (displayStatus === 'applied') return 'bg-emerald-100 text-[#188155]';
+    if (isInterviewStatus(status)) return 'bg-blue-100 text-blue-700 dark:bg-blue-950/50 dark:text-blue-300';
+    if (displayStatus === 'applied') return 'bg-emerald-100 text-[#188155] dark:bg-emerald-950/50 dark:text-emerald-300';
     if (isOfferStatus(status)) return 'bg-[#188155] text-white';
-    if (displayStatus === 'rejected') return 'bg-gray-200 text-gray-500';
-    if (displayStatus === 'closed') return 'bg-red-50 text-red-500';
-    return 'bg-gray-100 text-gray-600';
+    if (displayStatus === 'rejected') return 'bg-gray-200 text-gray-500 dark:bg-zinc-800 dark:text-zinc-400';
+    if (displayStatus === 'closed') return 'bg-red-50 text-red-500 dark:bg-red-950/50 dark:text-red-300';
+    return 'bg-gray-100 text-gray-600 dark:bg-zinc-800 dark:text-zinc-400';
   };
 
   return (
-    <div className="min-h-screen bg-[#fbfcfa]">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
       <div className="max-w-7xl mx-auto px-6 lg:px-10 pt-6 pb-12">
 
         {/* --- HEADER --- */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
           <div>
-            <h1 className="text-4xl font-bold text-gray-900 mb-2">My Applications</h1>
-            <p className="text-gray-500">Track your journey across {jobs.length} open roles.</p>
+            <h1 className="text-4xl font-bold text-[var(--text-primary)] mb-2">My Applications</h1>
+            <p className="text-[var(--text-secondary)]">Track your journey across {jobs.length} open roles.</p>
           </div>
-          <div className="bg-emerald-50 px-6 py-3 rounded-2xl border border-emerald-100 flex flex-col items-center md:items-end">
-            <p className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-1">Active Funnel</p>
-            <p className="text-2xl font-bold text-[#188155]">
+          <div className="bg-emerald-50 dark:bg-emerald-950/40 px-6 py-3 rounded-2xl border border-emerald-100 dark:border-emerald-800/40 flex flex-col items-center md:items-end">
+            <p className="text-[10px] font-bold text-gray-500 dark:text-gray-400 uppercase tracking-widest mb-1">Active Funnel</p>
+            <p className="text-2xl font-bold text-[#188155] dark:text-emerald-400">
               {interviewCount < 10 ? `0${interviewCount}` : interviewCount} Interviews
             </p>
           </div>
         </div>
 
         {errorMessage && (
-          <p className="text-red-500 text-sm mb-4 bg-red-50 p-3 rounded-lg border border-red-100" role="alert">
+          <p className="text-red-500 text-sm mb-4 bg-red-50 dark:bg-red-950/30 p-3 rounded-lg border border-red-100 dark:border-red-900/40" role="alert">
             {errorMessage}
           </p>
         )}
@@ -219,7 +219,7 @@ const Applications = ({ initialTab = "all" }) => {
               className={`px-6 py-2.5 rounded-full text-sm font-bold capitalize transition-all ${
                 activeTab === tab 
                   ? "bg-[#188155] text-white shadow-sm" 
-                  : "bg-transparent text-gray-600 hover:bg-gray-100"
+                  : "bg-transparent text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)]"
               }`}
             >
               {tab}
@@ -229,22 +229,22 @@ const Applications = ({ initialTab = "all" }) => {
 
         {/* --- THANH TÌM KIẾM & ĐỔI VIEW --- */}
         <div className="flex justify-between items-center mb-6">
-          <form onSubmit={(e) => e.preventDefault()} className="flex items-center gap-2 bg-white border border-gray-200 rounded-xl px-4 py-2 w-full max-w-sm shadow-sm focus-within:ring-2 focus-within:ring-emerald-100 focus-within:border-emerald-400 transition-all">
-            <FaSearch className="text-gray-400 text-lg" />
+          <form onSubmit={(e) => e.preventDefault()} className="flex items-center gap-2 bg-[var(--bg-elevated)] border border-[var(--border-primary)] rounded-xl px-4 py-2 w-full max-w-sm shadow-sm focus-within:ring-2 focus-within:ring-emerald-500/20 focus-within:border-emerald-500 transition-all">
+            <FaSearch className="text-[var(--text-secondary)] text-lg" />
             <input
               type="search"
               placeholder="Search applications..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full bg-transparent border-none outline-none text-sm text-gray-700 placeholder-gray-400 focus:ring-0"
+              className="w-full bg-transparent border-none outline-none text-sm text-[var(--text-primary)] placeholder-[var(--text-secondary)] focus:ring-0"
             />
           </form>
 
-          <div className="flex items-center gap-2 bg-white border border-gray-200 p-1 rounded-lg shadow-sm">
-            <button onClick={() => setIsCardView(true)} className={`p-2 rounded-md transition-colors ${isCardView ? "bg-gray-100 text-[#188155]" : "text-gray-400 hover:text-gray-700"}`}>
+          <div className="flex items-center gap-2 bg-[var(--bg-elevated)] border border-[var(--border-primary)] p-1 rounded-lg shadow-sm">
+            <button onClick={() => setIsCardView(true)} className={`p-2 rounded-md transition-colors ${isCardView ? "bg-[var(--bg-secondary)] text-[#188155] dark:text-emerald-400" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
               <FaThLarge />
             </button>
-            <button onClick={() => setIsCardView(false)} className={`p-2 rounded-md transition-colors ${!isCardView ? "bg-gray-100 text-[#188155]" : "text-gray-400 hover:text-gray-700"}`}>
+            <button onClick={() => setIsCardView(false)} className={`p-2 rounded-md transition-colors ${!isCardView ? "bg-[var(--bg-secondary)] text-[#188155] dark:text-emerald-400" : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"}`}>
               <FaList />
             </button>
           </div>
@@ -269,8 +269,8 @@ const Applications = ({ initialTab = "all" }) => {
           {visibleJobs.map((job) => (
             <div
               key={job.id}
-              className={`bg-white rounded-2xl p-6 shadow-sm flex flex-col justify-between h-[240px] transition-all hover:shadow-md cursor-pointer ${
-                job.status?.toLowerCase() === 'offered' ? 'border-2 border-[#188155]' : 'border border-gray-100'
+              className={`bg-[var(--bg-elevated)] rounded-2xl p-6 shadow-sm flex flex-col justify-between h-[240px] transition-all hover:shadow-md cursor-pointer ${
+                job.status?.toLowerCase() === 'offered' ? 'border-2 border-[#188155]' : 'border border-[var(--border-primary)]'
               }`}
               onClick={() => openJobDetail(job)}
             >
@@ -287,20 +287,20 @@ const Applications = ({ initialTab = "all" }) => {
 
               {/* Card Body: Info */}
               <div className="mb-4">
-                <h3 className="text-xl font-bold text-gray-900 truncate">{job.jobTitle}</h3>
-                <p className="text-sm text-gray-500 truncate">{job.companyName} • {job.location || "Remote"}</p>
+                <h3 className="text-xl font-bold text-[var(--text-primary)] truncate">{job.jobTitle}</h3>
+                <p className="text-sm text-[var(--text-secondary)] truncate">{job.companyName} • {job.location || "Remote"}</p>
               </div>
 
               {/* Card Footer: Date & Actions */}
-              <div className="flex justify-between items-end mt-auto pt-4 border-t border-gray-50">
+              <div className="flex justify-between items-end mt-auto pt-4 border-t border-[var(--border-primary)]">
                 <div>
-                  <p className="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-0.5">Applied On</p>
-                  <p className="text-xs font-semibold text-gray-600">{formatDate(job.applicationDate).toUpperCase()}</p>
+                  <p className="text-[10px] font-bold text-[var(--text-secondary)] uppercase tracking-widest mb-0.5">Applied On</p>
+                  <p className="text-xs font-semibold text-[var(--text-primary)]">{formatDate(job.applicationDate).toUpperCase()}</p>
                 </div>
                 <div className="flex items-center gap-4">
                   <button
                     onClick={(e) => { e.stopPropagation(); deleteJob(job); }}
-                    className="text-gray-400 hover:text-red-500 transition-colors"
+                    className="text-[var(--text-secondary)] hover:text-red-500 transition-colors"
                     title="Delete Application"
                   >
                     <FaTrashAlt />
@@ -308,12 +308,12 @@ const Applications = ({ initialTab = "all" }) => {
                   {job.status?.toLowerCase() === 'offered' ? (
                     <button
                       onClick={(e) => { e.stopPropagation(); openOfferModal(job, e); }}
-                      className="text-sm font-bold text-[#188155] hover:underline"
+                      className="text-sm font-bold text-[#188155] dark:text-emerald-400 hover:underline"
                     >
                       {t("candidate.viewOffer", "View Offer")}
                     </button>
                   ) : (
-                    <span className="text-sm font-bold text-[#188155] hover:underline">
+                    <span className="text-sm font-bold text-[#188155] dark:text-emerald-400 hover:underline">
                       View Details
                     </span>
                   )}
@@ -325,13 +325,13 @@ const Applications = ({ initialTab = "all" }) => {
           {/* Special Card: Find More Jobs */}
           <Link
             to="/candidate/job"
-            className="bg-[#fbfcfa] rounded-2xl p-6 border-2 border-dashed border-gray-300 flex flex-col items-center justify-center h-[240px] cursor-pointer hover:bg-white hover:border-[#188155] transition-all group"
+            className="bg-[var(--bg-elevated)] rounded-2xl p-6 border-2 border-dashed border-[var(--border-primary)] flex flex-col items-center justify-center h-[240px] cursor-pointer hover:border-[#188155] transition-all group"
           >
-            <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center text-gray-500 group-hover:bg-emerald-50 group-hover:text-[#188155] mb-4 transition-colors">
+            <div className="w-12 h-12 bg-[var(--bg-secondary)] rounded-full flex items-center justify-center text-[var(--text-secondary)] group-hover:bg-emerald-50 dark:group-hover:bg-emerald-950/50 group-hover:text-[#188155] dark:group-hover:text-emerald-400 mb-4 transition-colors">
               <FaPlus size={20} />
             </div>
-            <h3 className="text-lg font-bold text-gray-900 group-hover:text-[#188155]">Find more jobs</h3>
-            <p className="text-sm text-gray-500 mt-1">Apply more</p>
+            <h3 className="text-lg font-bold text-[var(--text-primary)] group-hover:text-[#188155] dark:group-hover:text-emerald-400">Find more jobs</h3>
+            <p className="text-sm text-[var(--text-secondary)] mt-1">Apply more</p>
           </Link>
 
           </div>
@@ -339,10 +339,10 @@ const Applications = ({ initialTab = "all" }) => {
 
         {/* ================== LIST VIEW (TABLE) ================== */}
         {!isLoading && !savedJobsLoading && !isCardView ? (
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+          <div className="bg-[var(--bg-elevated)] rounded-2xl shadow-sm border border-[var(--border-primary)] overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-sm text-left">
-                <thead className="bg-gray-50 text-gray-500 text-xs uppercase tracking-wider">
+                <thead className="bg-[var(--bg-secondary)] text-[var(--text-secondary)] text-xs uppercase tracking-wider">
                   <tr>
                     <th className="px-6 py-4"></th>
                     <th className="px-6 py-4 font-bold">Title</th>
@@ -351,34 +351,34 @@ const Applications = ({ initialTab = "all" }) => {
                     <th className="px-6 py-4 font-bold">Date</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-gray-100">
+                <tbody className="divide-y divide-[var(--border-primary)]">
                   {visibleJobs.map((job) => (
-                    <tr key={job.id} className="hover:bg-gray-50/50 transition-colors">
+                    <tr key={job.id} className="hover:bg-[var(--bg-secondary)]/50 transition-colors">
                       <td className="px-6 py-4 text-center w-12">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 text-[#188155] border-gray-300 rounded focus:ring-[#188155]"
+                          className="w-4 h-4 text-[#188155] border-[var(--border-primary)] rounded focus:ring-[#188155]"
                           checked={checkedJobIds.includes(job.id)}
                           onChange={() => handleCheckJob(job.id)}
                         />
                       </td>
-                      <td className="px-6 py-4 cursor-pointer font-bold text-gray-900" onClick={() => openJobDetail(job)}>
+                      <td className="px-6 py-4 cursor-pointer font-bold text-[var(--text-primary)]" onClick={() => openJobDetail(job)}>
                         {job.jobTitle}
                       </td>
-                      <td className="px-6 py-4 text-gray-600">{job.companyName}</td>
+                      <td className="px-6 py-4 text-[var(--text-secondary)]">{job.companyName}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest ${getBadgeStyle(job.status)}`}>
                           {getApplicationStatusLabel(job.status)}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-gray-500 font-medium">{formatDate(job.applicationDate).toUpperCase()}</td>
+                      <td className="px-6 py-4 text-[var(--text-secondary)] font-medium">{formatDate(job.applicationDate).toUpperCase()}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
             </div>
             {checkedJobIds.length > 0 && (
-              <div className="bg-gray-50 px-6 py-4 border-t border-gray-100 flex justify-end">
+              <div className="bg-[var(--bg-secondary)] px-6 py-4 border-t border-[var(--border-primary)] flex justify-end">
                 <button
                   className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-6 rounded-lg transition-colors shadow-sm"
                   onClick={handleBulkDelete}
@@ -394,8 +394,8 @@ const Applications = ({ initialTab = "all" }) => {
 
       {/* ================== OFFER MODAL ================== */}
       {showOfferModal && selectedOfferJob && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm px-4">
-          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+          <div className="bg-[var(--bg-elevated)] rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden border border-[var(--border-primary)]">
             {/* Modal Header */}
             <div className="bg-emerald-600 px-6 py-5 flex items-center justify-between">
               <div>
@@ -414,14 +414,14 @@ const Applications = ({ initialTab = "all" }) => {
             {/* Modal Body */}
             <div className="p-6 space-y-6">
               {/* Job Info */}
-              <div className="bg-emerald-50 rounded-xl p-4 flex items-center gap-4">
+              <div className="bg-[var(--bg-secondary)] rounded-xl p-4 flex items-center gap-4">
                 <div className="w-12 h-12 bg-emerald-600 rounded-xl flex items-center justify-center text-white text-xs font-bold shrink-0">
                   {selectedOfferJob.companyName?.charAt(0) || "C"}
                 </div>
                 <div>
-                  <p className="font-bold text-gray-900">{selectedOfferJob.jobTitle}</p>
-                  <p className="text-sm text-gray-500">{selectedOfferJob.companyName} &middot; {selectedOfferJob.location || "Remote"}</p>
-                  <p className="text-xs text-gray-400 mt-1">
+                  <p className="font-bold text-[var(--text-primary)]">{selectedOfferJob.jobTitle}</p>
+                  <p className="text-sm text-[var(--text-secondary)]">{selectedOfferJob.companyName} &middot; {selectedOfferJob.location || "Remote"}</p>
+                  <p className="text-xs text-[var(--text-secondary)] mt-1">
                     {t("Applied On", "Applied On")}: {formatDate(selectedOfferJob.applicationDate).toUpperCase()}
                   </p>
                 </div>
@@ -429,18 +429,18 @@ const Applications = ({ initialTab = "all" }) => {
 
               {/* Congratulations Message */}
               <div className="text-center">
-                <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                  <FaCheck className="text-emerald-600 text-2xl" />
+                <div className="w-16 h-16 bg-emerald-100 dark:bg-emerald-950/60 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <FaCheck className="text-emerald-600 dark:text-emerald-400 text-2xl" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-1">{t("candidate.offerReceived", "You have received an offer!")}</h3>
-                <p className="text-sm text-gray-500">
+                <h3 className="text-lg font-bold text-[var(--text-primary)] mb-1">{t("candidate.offerReceived", "You have received an offer!")}</h3>
+                <p className="text-sm text-[var(--text-secondary)]">
                   Please review the offer details from the recruiter. You can accept or decline this offer.
                 </p>
               </div>
 
               {/* Decline Reason */}
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-semibold text-[var(--text-primary)] mb-2">
                   {t("candidate.declineOffer", "Decline Offer")} &mdash; {t("candidate.declineReasonPlaceholder", "Reason for declining (optional)")}
                 </label>
                 <textarea
@@ -448,7 +448,7 @@ const Applications = ({ initialTab = "all" }) => {
                   onChange={(e) => setDeclineReason(e.target.value)}
                   placeholder={t("candidate.declineReasonPlaceholder", "Reason for declining (optional)")}
                   rows={3}
-                  className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-gray-700 resize-none focus:outline-none focus:ring-2 focus:ring-emerald-200 focus:border-emerald-400 transition-all"
+                  className="w-full bg-[var(--bg-primary)] border border-[var(--border-primary)] rounded-xl px-4 py-3 text-sm text-[var(--text-primary)] resize-none focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 transition-all"
                 />
               </div>
 
@@ -457,7 +457,7 @@ const Applications = ({ initialTab = "all" }) => {
                 <button
                   onClick={handleDeclineOffer}
                   disabled={isResponding}
-                  className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-gray-100 text-gray-700 font-bold hover:bg-red-50 hover:text-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-gray-200"
+                  className="flex-1 flex items-center justify-center gap-2 px-5 py-3 rounded-xl bg-[var(--bg-secondary)] text-[var(--text-primary)] font-bold hover:bg-red-50 dark:hover:bg-red-950/50 hover:text-red-600 transition-all disabled:opacity-50 disabled:cursor-not-allowed border border-[var(--border-primary)]"
                 >
                   <FaTimes />
                   {t("candidate.declineOffer", "Decline Offer")}

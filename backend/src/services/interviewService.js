@@ -43,9 +43,8 @@ export const interviewService = {
     try {
       await client.query("BEGIN");
       
-      const application = await applicationRepository.findById(applicationId);
-      if (!application) throw new Error("Application not found");
-      // Basic check for recruiter permission would go here if not already handled by repo findById with recruiter_id
+      const application = await applicationRepository.findByIdForRecruiter(applicationId, recruiterId);
+      if (!application) throw new Error("Application not found or permission denied");
       
       let finalInterviewerName = interviewerName;
       if (interviewerId) {

@@ -124,7 +124,8 @@ export const applicationService = {
   },
 
   updateStatus: async (id, status, actorId) => {
-    const application = await applicationRepository.updateStatus(id, status);
+    const application = await applicationRepository.updateStatusForRecruiter(id, actorId, status);
+    if (!application) throw new Error("Application not found");
     
     await applicationRepository.addEvent(
       id,
@@ -139,7 +140,7 @@ export const applicationService = {
   },
 
   reject: async (id, actorId, { reason, emailBody }) => {
-    const application = await applicationRepository.reject(id, reason, emailBody);
+    const application = await applicationRepository.rejectForRecruiter(id, actorId, reason, emailBody);
     if (!application) throw new Error("Application not found");
 
     await applicationRepository.addEvent(
@@ -155,7 +156,7 @@ export const applicationService = {
   },
 
   offer: async (id, actorId) => {
-    const application = await applicationRepository.updateStatus(id, "accepted");
+    const application = await applicationRepository.updateStatusForRecruiter(id, actorId, "accepted");
     if (!application) throw new Error("Application not found");
 
     await applicationRepository.addEvent(
@@ -170,7 +171,7 @@ export const applicationService = {
   },
 
   acceptOffer: async (id, actorId) => {
-    const application = await applicationRepository.updateStatus(id, "accepted");
+    const application = await applicationRepository.acceptOfferForCandidate(id, actorId);
     if (!application) throw new Error("Application not found");
 
     await applicationRepository.addEvent(
@@ -185,7 +186,7 @@ export const applicationService = {
   },
 
   declineOffer: async (id, actorId, reason) => {
-    const application = await applicationRepository.updateStatus(id, "rejected");
+    const application = await applicationRepository.declineOfferForCandidate(id, actorId, reason);
     if (!application) throw new Error("Application not found");
 
     await applicationRepository.addEvent(
@@ -201,7 +202,8 @@ export const applicationService = {
   },
 
   updateRating: async (id, rating, actorId) => {
-    const application = await applicationRepository.updateRating(id, rating);
+    const application = await applicationRepository.updateRatingForRecruiter(id, actorId, rating);
+    if (!application) throw new Error("Application not found");
     
     await applicationRepository.addEvent(
       id,
@@ -215,20 +217,26 @@ export const applicationService = {
     return application;
   },
 
-  getNotes: async (applicationId) => {
-    return await applicationRepository.getNotes(applicationId);
+  getNotes: async (applicationId, recruiterId) => {
+    return await applicationRepository.getNotesForRecruiter(applicationId, recruiterId);
   },
 
   addNote: async (applicationId, recruiterId, note) => {
-    return await applicationRepository.addNote(applicationId, recruiterId, note);
+    const created = await applicationRepository.addNoteForRecruiter(applicationId, recruiterId, note);
+    if (!created) throw new Error("Application not found");
+    return created;
   },
 
-  updateNote: async (noteId, note) => {
-    return await applicationRepository.updateNote(noteId, note);
+  updateNote: async (noteId, recruiterId, note) => {
+    const updated = await applicationRepository.updateNoteForRecruiter(noteId, recruiterId, note);
+    if (!updated) throw new Error("Note not found");
+    return updated;
   },
 
-  deleteNote: async (noteId) => {
-    return await applicationRepository.deleteNote(noteId);
+  deleteNote: async (noteId, recruiterId) => {
+    const deleted = await applicationRepository.deleteNoteForRecruiter(noteId, recruiterId);
+    if (!deleted) throw new Error("Note not found");
+    return true;
   },
 
   getAiScreening: async () => {

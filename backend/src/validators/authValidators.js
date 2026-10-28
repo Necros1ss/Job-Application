@@ -10,7 +10,7 @@ export const signupSchema = z.object({
     name: trimmedName,
     email: emailSchema,
     password: passwordSchema,
-    role: z.enum([USER_ROLES.CANDIDATE, USER_ROLES.RECRUITER, USER_ROLES.HR_MANAGER, USER_ROLES.INTERVIEWER]).default(USER_ROLES.CANDIDATE),
+    role: z.enum([USER_ROLES.CANDIDATE, USER_ROLES.RECRUITER]).default(USER_ROLES.CANDIDATE),
   }),
   query: z.object({}).passthrough(),
   params: z.object({}).passthrough(),

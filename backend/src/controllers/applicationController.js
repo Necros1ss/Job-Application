@@ -87,12 +87,16 @@ export const addNote = asyncHandler(async (req, res) => {
 });
 
 export const updateNote = asyncHandler(async (req, res) => {
-  const note = await applicationService.updateNote(req.params.noteId, req.body.note);
+  const note = await applicationService
+    .updateNote(req.params.noteId, req.user.id, req.body.note)
+    .catch(setNotFoundStatus);
   return res.json(successResponse(note, "Note updated successfully"));
 });
 
 export const deleteNote = asyncHandler(async (req, res) => {
-  await applicationService.deleteNote(req.params.noteId);
+  await applicationService
+    .deleteNote(req.params.noteId, req.user.id)
+    .catch(setNotFoundStatus);
   return res.json(successResponse(null, "Note deleted successfully"));
 });
 
@@ -156,6 +160,6 @@ export const getRecruiterApplications = listForRecruiter;
 export const getApplicationById = getForRecruiter;
 export const applyForJob = apply;
 export const getNotes = asyncHandler(async (req, res) => {
-  const notes = await applicationService.getNotes(req.params.id);
+  const notes = await applicationService.getNotes(req.params.id, req.user.id);
   return res.json(successResponse(notes));
 });

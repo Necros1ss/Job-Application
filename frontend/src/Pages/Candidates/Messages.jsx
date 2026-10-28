@@ -60,21 +60,21 @@ const EmptyInbox = ({ tab }) => {
   if (tab === "unread") {
     return (
       <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
-        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f2f2f2]">
-          <FaEnvelopeOpen size={24} className="text-[#a3a3a3]" />
+        <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--bg-secondary)]">
+          <FaEnvelopeOpen size={24} className="text-[var(--text-secondary)]" />
         </div>
-        <h3 className="text-[15px] font-semibold text-[#0a0a0a]">{t("messages.noUnreadTitle")}</h3>
-        <p className="mt-1.5 text-sm text-[#737373]">You&apos;re all caught up.</p>
+        <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">{t("messages.noUnreadTitle")}</h3>
+        <p className="mt-1.5 text-sm text-[var(--text-secondary)]">You&apos;re all caught up.</p>
       </div>
     );
   }
   return (
     <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
-      <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f2f2f2]">
-        <FaInbox size={24} className="text-[#a3a3a3]" />
+      <div className="mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-[var(--bg-secondary)]">
+        <FaInbox size={24} className="text-[var(--text-secondary)]" />
       </div>
-      <h3 className="text-[15px] font-semibold text-[#0a0a0a]">{t("messages.emptyTitle")}</h3>
-      <p className="mt-1.5 text-sm text-[#737373]">{t("messages.emptyDescription")}</p>
+      <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">{t("messages.emptyTitle")}</h3>
+      <p className="mt-1.5 text-sm text-[var(--text-secondary)]">{t("messages.emptyDescription")}</p>
     </div>
   );
 };
@@ -88,13 +88,13 @@ const EmptyDetail = () => {
   return (
     <div className="flex h-full flex-col items-center justify-center px-6 py-16 text-center">
       <div className="relative mb-6">
-        <div className="absolute inset-0 rounded-full bg-[#f2f2f2] blur-xl opacity-50" />
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f2f2f2]">
-          <FaPaperPlane size={20} className="text-[#a3a3a3]" />
+        <div className="absolute inset-0 rounded-full bg-[var(--bg-secondary)] blur-xl opacity-50" />
+        <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--bg-secondary)]">
+          <FaPaperPlane size={20} className="text-[var(--text-secondary)]" />
         </div>
       </div>
-      <h3 className="text-[15px] font-semibold text-[#0a0a0a]">{t("messages.selectTitle")}</h3>
-      <p className="mt-1.5 max-w-xs text-sm text-[#737373]">{t("messages.selectDescription")}</p>
+      <h3 className="text-[15px] font-semibold text-[var(--text-primary)]">{t("messages.selectTitle")}</h3>
+      <p className="mt-1.5 max-w-xs text-sm text-[var(--text-secondary)]">{t("messages.selectDescription")}</p>
     </div>
   );
 };
@@ -106,10 +106,10 @@ const MessageListItem = ({ message, isSelected, onClick }) => {
     <button
       type="button"
       onClick={onClick}
-      className={`group w-full px-4 py-3.5 text-left transition-all duration-150 border-b border-[#f0f0f0] ${
+      className={`group w-full px-4 py-3.5 text-left transition-all duration-150 border-b border-[var(--border-primary)] ${
         isSelected
-          ? "bg-[#f7f7f7]"
-          : "hover:bg-[#fafafa]"
+          ? "bg-[var(--bg-secondary)]"
+          : "hover:bg-[var(--bg-secondary)]/60"
       }`}
     >
       <div className="flex items-start gap-3">
@@ -123,31 +123,31 @@ const MessageListItem = ({ message, isSelected, onClick }) => {
           <div className="flex items-center justify-between gap-2">
             <p
               className={`truncate text-[13px] ${
-                message.isRead ? "font-medium text-[#525252]" : "font-semibold text-[#0a0a0a]"
+                message.isRead ? "font-medium text-[var(--text-secondary)]" : "font-semibold text-[var(--text-primary)]"
               }`}
             >
               {message.senderName || "Unknown recruiter"}
             </p>
-            <span className="shrink-0 text-[11px] text-[#a3a3a3]">
+            <span className="shrink-0 text-[11px] text-[var(--text-secondary)]">
               {formatMessageTime(message.createdAt)}
             </span>
           </div>
 
           <p
             className={`mt-0.5 truncate text-[13px] ${
-              message.isRead ? "text-[#737373]" : "font-medium text-[#0a0a0a]"
+              message.isRead ? "text-[var(--text-secondary)]" : "font-medium text-[var(--text-primary)]"
             }`}
           >
             {message.subject}
           </p>
 
-          <p className="mt-0.5 truncate text-[12px] leading-snug text-[#a3a3a3]">
+          <p className="mt-0.5 truncate text-[12px] leading-snug text-[var(--text-secondary)]">
             {message.content}
           </p>
         </div>
 
         {!message.isRead && (
-          <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[#0a0a0a]" />
+          <div className="mt-2 h-2 w-2 shrink-0 rounded-full bg-[var(--text-primary)]" />
         )}
       </div>
     </button>
@@ -165,12 +165,12 @@ const MessageDetail = ({ message, onBack, onViewJob, t }) => {
   const contentRef = useRef(null);
 
   return (
-    <div className="flex h-full flex-col">
-      <div className="border-b border-[#f0f0f0] px-6 py-4">
+    <div className="flex h-full flex-col bg-[var(--bg-elevated)] text-[var(--text-primary)]">
+      <div className="border-b border-[var(--border-primary)] px-6 py-4">
         <button
           type="button"
           onClick={onBack}
-          className="mb-3 flex items-center gap-2 text-sm font-medium text-[#737373] hover:text-[#0a0a0a] lg:hidden"
+          className="mb-3 flex items-center gap-2 text-sm font-medium text-[var(--text-secondary)] hover:text-[var(--text-primary)] lg:hidden"
         >
           <FaArrowLeft size={12} />
           {t("common.back")}
@@ -185,15 +185,15 @@ const MessageDetail = ({ message, onBack, onViewJob, t }) => {
           <div className="min-w-0 flex-1">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <p className="text-[11px] font-medium uppercase tracking-wider text-[#a3a3a3]">
+                <p className="text-[11px] font-medium uppercase tracking-wider text-[var(--text-secondary)]">
                   {t("messages.from")}
                 </p>
-                <p className="mt-0.5 text-[14px] font-semibold text-[#0a0a0a]">
+                <p className="mt-0.5 text-[14px] font-semibold text-[var(--text-primary)]">
                   {message.senderName || "Unknown recruiter"}
                 </p>
               </div>
               <div className="shrink-0 text-right">
-                <p className="text-[11px] font-medium text-[#a3a3a3]">
+                <p className="text-[11px] font-medium text-[var(--text-secondary)]">
                   {formatFullDateTime(message.createdAt)}
                 </p>
               </div>
@@ -201,14 +201,14 @@ const MessageDetail = ({ message, onBack, onViewJob, t }) => {
           </div>
         </div>
 
-        <h1 className="mt-4 text-[18px] font-semibold leading-snug text-[#0a0a0a]">
+        <h1 className="mt-4 text-[18px] font-semibold leading-snug text-[var(--text-primary)]">
           {message.subject}
         </h1>
 
         {(message.jobTitle || message.jobPostId) && (
           <div className="mt-3 flex flex-wrap items-center gap-2">
             {message.jobTitle && (
-              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f2f2f2] px-3 py-1 text-[11px] font-medium text-[#525252]">
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[var(--bg-secondary)] px-3 py-1 text-[11px] font-medium text-[var(--text-secondary)]">
                 <FaBriefcase size={10} />
                 {message.jobTitle}
               </span>
@@ -218,17 +218,17 @@ const MessageDetail = ({ message, onBack, onViewJob, t }) => {
       </div>
 
       <div className="flex-1 overflow-y-auto px-6 py-5" ref={contentRef}>
-        <div className="text-[14px] leading-7 text-[#262626]">
+        <div className="text-[14px] leading-7 text-[var(--text-primary)]">
           <p className="whitespace-pre-wrap">{message.content}</p>
         </div>
       </div>
 
       {message.jobPostId && (
-        <div className="border-t border-[#f0f0f0] px-6 py-4">
+        <div className="border-t border-[var(--border-primary)] px-6 py-4">
           <button
             type="button"
             onClick={onViewJob}
-            className="inline-flex items-center gap-2 rounded-xl bg-[#0a0a0a] px-5 py-2.5 text-[13px] font-semibold text-white hover:bg-[#262626] transition-colors"
+            className="inline-flex items-center gap-2 rounded-xl bg-[var(--color-rich-black)] px-5 py-2.5 text-[13px] font-semibold text-[var(--color-canvas-white)] hover:opacity-90 transition-opacity"
           >
             {t("messages.viewJob")}
           </button>
@@ -347,39 +347,39 @@ const Messages = () => {
   const pageNumber = Math.floor(offset / PAGE_SIZE) + 1;
 
   return (
-    <div className="min-h-screen bg-[#fafafa]">
+    <div className="min-h-screen bg-[var(--bg-primary)] text-[var(--text-primary)]">
 
       <div className="mx-auto max-w-7xl px-4 sm:px-6 pb-12 pt-6 lg:px-10">
         <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
           <div>
-            <p className="text-[11px] font-semibold uppercase tracking-widest text-[#a3a3a3]">
+            <p className="text-[11px] font-semibold uppercase tracking-widest text-[var(--text-secondary)]">
               {t("messages.kicker")}
             </p>
-            <h1 className="mt-1 text-[26px] font-bold tracking-tight text-[#0a0a0a]">
+            <h1 className="mt-1 text-[26px] font-bold tracking-tight text-[var(--text-primary)]">
               {t("messages.title")}
             </h1>
-            <p className="mt-0.5 text-sm text-[#737373]">{t("messages.subtitle")}</p>
+            <p className="mt-0.5 text-sm text-[var(--text-secondary)]">{t("messages.subtitle")}</p>
           </div>
 
           <div className="flex items-center gap-3">
-            <div className="rounded-2xl border border-[#e5e5e5] bg-white px-4 py-2.5 text-center shadow-sm">
-              <p className="text-[10px] font-semibold uppercase tracking-wide text-[#a3a3a3]">
+            <div className="rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-elevated)] px-4 py-2.5 text-center shadow-sm">
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-[var(--text-secondary)]">
                 {t("messages.unread")}
               </p>
-              <p className="mt-0.5 text-xl font-bold text-[#0a0a0a]">{unreadCount}</p>
+              <p className="mt-0.5 text-xl font-bold text-[var(--text-primary)]">{unreadCount}</p>
             </div>
           </div>
         </div>
 
         {errorMessage && (
-          <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 p-3 text-sm text-red-600">
+          <div className="mb-4 rounded-2xl border border-red-200 bg-red-50 dark:bg-red-950/30 p-3 text-sm text-red-600 dark:text-red-400">
             {errorMessage}
           </div>
         )}
 
         {isLoading ? (
-          <div className="flex h-[680px] overflow-hidden rounded-2xl border border-[#e5e5e5] bg-white shadow-sm">
-            <div className="w-full sm:w-80 border-r border-[#f0f0f0] p-4 space-y-3">
+          <div className="flex h-[680px] overflow-hidden rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-elevated)] shadow-sm">
+            <div className="w-full sm:w-80 border-r border-[var(--border-primary)] p-4 space-y-3">
               <SkeletonCard />
               <SkeletonCard />
               <SkeletonCard />
@@ -389,28 +389,28 @@ const Messages = () => {
             </div>
           </div>
         ) : messages.length > 0 ? (
-          <div className="flex h-[680px] overflow-hidden rounded-2xl border border-[#e5e5e5] bg-white shadow-sm">
+          <div className="flex h-[680px] overflow-hidden rounded-2xl border border-[var(--border-primary)] bg-[var(--bg-elevated)] shadow-sm">
             <aside
-              className={`w-full sm:w-80 shrink-0 flex flex-col border-r border-[#f0f0f0] bg-white ${
+              className={`w-full sm:w-80 shrink-0 flex flex-col border-r border-[var(--border-primary)] bg-[var(--bg-elevated)] ${
                 showDetailOnMobile ? "hidden sm:flex" : "flex"
               }`}
             >
-              <div className="border-b border-[#f0f0f0] px-4 pt-4 pb-3">
+              <div className="border-b border-[var(--border-primary)] px-4 pt-4 pb-3">
                 <div className="flex items-center justify-between mb-3">
-                  <h2 className="text-[15px] font-semibold text-[#0a0a0a]">{t("messages.inbox")}</h2>
-                  <span className="rounded-full bg-[#f2f2f2] px-2.5 py-0.5 text-[11px] font-semibold text-[#525252]">
+                  <h2 className="text-[15px] font-semibold text-[var(--text-primary)]">{t("messages.inbox")}</h2>
+                  <span className="rounded-full bg-[var(--bg-secondary)] px-2.5 py-0.5 text-[11px] font-semibold text-[var(--text-secondary)]">
                     {totalShown}
                   </span>
                 </div>
 
-                <div className="inline-flex rounded-xl border border-[#e5e5e5] bg-[#fafafa] p-1">
+                <div className="inline-flex rounded-xl border border-[var(--border-primary)] bg-[var(--bg-secondary)] p-1">
                   <button
                     type="button"
                     onClick={() => handleTabChange("all")}
                     className={`flex-1 rounded-lg px-3 py-1.5 text-[12px] font-semibold transition-all ${
                       activeTab === "all"
-                        ? "bg-white text-[#0a0a0a] shadow-sm"
-                        : "text-[#737373] hover:text-[#0a0a0a]"
+                        ? "bg-[var(--bg-elevated)] text-[var(--text-primary)] shadow-sm"
+                        : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     }`}
                   >
                     {t("messages.all")}
@@ -420,13 +420,13 @@ const Messages = () => {
                     onClick={() => handleTabChange("unread")}
                     className={`flex-1 rounded-lg px-3 py-1.5 text-[12px] font-semibold transition-all flex items-center justify-center gap-1.5 ${
                       activeTab === "unread"
-                        ? "bg-white text-[#0a0a0a] shadow-sm"
-                        : "text-[#737373] hover:text-[#0a0a0a]"
+                        ? "bg-[var(--bg-elevated)] text-[var(--text-primary)] shadow-sm"
+                        : "text-[var(--text-secondary)] hover:text-[var(--text-primary)]"
                     }`}
                   >
                     {t("messages.unread")}
                     {unreadCount > 0 && (
-                      <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[#0a0a0a] px-1 text-[10px] font-bold text-white">
+                      <span className="flex h-4 min-w-[16px] items-center justify-center rounded-full bg-[var(--color-rich-black)] px-1 text-[10px] font-bold text-[var(--color-canvas-white)]">
                         {unreadCount}
                       </span>
                     )}
@@ -449,24 +449,24 @@ const Messages = () => {
                 )}
               </div>
 
-              <div className="border-t border-[#f0f0f0] px-4 py-2.5 flex items-center justify-between">
+              <div className="border-t border-[var(--border-primary)] px-4 py-2.5 flex items-center justify-between">
                 <button
                   type="button"
                   disabled={!hasPrevPage}
                   onClick={handlePrevPage}
-                  className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12px] font-medium text-[#737373] hover:bg-[#f2f2f2] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12px] font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 >
                   <FaChevronLeft size={11} />
                   Prev
                 </button>
-                <span className="text-[11px] font-medium text-[#a3a3a3]">
+                <span className="text-[11px] font-medium text-[var(--text-secondary)]">
                   {pageNumber}
                 </span>
                 <button
                   type="button"
                   disabled={!hasNextPage}
                   onClick={handleNextPage}
-                  className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12px] font-medium text-[#737373] hover:bg-[#f2f2f2] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                  className="inline-flex items-center gap-1.5 rounded-lg px-3 py-1.5 text-[12px] font-medium text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 >
                   Next
                   <FaChevronRight size={11} />
@@ -492,12 +492,12 @@ const Messages = () => {
             </section>
           </div>
         ) : (
-          <div className="flex h-[400px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[#e5e5e5] bg-white">
-            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f2f2f2]">
-              <FaEnvelope size={20} className="text-[#a3a3a3]" />
+          <div className="flex h-[400px] flex-col items-center justify-center rounded-2xl border-2 border-dashed border-[var(--border-primary)] bg-[var(--bg-elevated)]">
+            <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-[var(--bg-secondary)]">
+              <FaEnvelope size={20} className="text-[var(--text-secondary)]" />
             </div>
-            <h2 className="text-[15px] font-semibold text-[#0a0a0a]">{t("messages.emptyTitle")}</h2>
-            <p className="mt-1 text-sm text-[#737373]">{t("messages.emptyDescription")}</p>
+            <h2 className="text-[15px] font-semibold text-[var(--text-primary)]">{t("messages.emptyTitle")}</h2>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("messages.emptyDescription")}</p>
           </div>
         )}
       </div>

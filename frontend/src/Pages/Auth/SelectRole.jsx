@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { FaArrowLeft, FaArrowRight, FaBriefcase, FaCheck, FaUserTie, FaUserShield, FaUserEdit } from "react-icons/fa";
+import { FaArrowLeft, FaArrowRight, FaBriefcase, FaCheck, FaUserTie } from "react-icons/fa";
 import LanguageSwitcher from "../../Components/LanguageSwitcher";
 
 const SelectRole = () => {
@@ -23,20 +23,6 @@ const SelectRole = () => {
       description: "Post roles, review candidates, schedule interviews, send offers, and start onboarding.",
       icon: FaBriefcase,
     },
-    {
-      role: "hr_manager",
-      title: "HR Manager",
-      headline: "Oversee hiring and recruiter performance.",
-      description: "Approve job posts, monitor recruiter activity, generate reports, and manage the hiring pipeline.",
-      icon: FaUserShield,
-    },
-    {
-      role: "interviewer",
-      title: "Interviewer",
-      headline: "Evaluate candidates and provide feedback.",
-      description: "View assigned interviews, submit structured evaluations, and share hiring recommendations.",
-      icon: FaUserEdit,
-    },
   ];
 
   const handleContinue = () => {
@@ -51,7 +37,7 @@ const SelectRole = () => {
     <div className="min-h-screen blueprint-grid-bg px-4 py-8 text-[#0a0a0a]">
       <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl overflow-hidden rounded-[14px] border border-[#e5e5e5] bg-white shadow-[0_0_0_1px_rgba(10,10,10,0.1)] lg:grid-cols-[0.95fr_1.05fr]">
         <aside className="blueprint-hero-panel hidden rounded-none border-0 border-r border-[#e5e5e5] p-10 lg:flex lg:flex-col lg:justify-start lg:gap-10">
-          <Link to="/" className="w-fit rounded-full px-3 py-2 text-sm font-medium text-[#737373] hover:bg-white hover:text-black">
+          <Link to="/" className="w-fit inline-flex items-center gap-2 rounded-full border border-neutral-300 bg-neutral-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black hover:scale-[1.02] transition-all">
             <span className="inline-flex items-center gap-2">
               <FaArrowLeft size={12} />
               Back
@@ -61,7 +47,7 @@ const SelectRole = () => {
           <div className="relative z-10">
             <p className="text-xs font-medium uppercase text-[#737373]">Workspace setup</p>
             <h1 className="mt-3 max-w-md text-[40px] font-semibold leading-none text-black">
-              One HR workspace, four focused starting points.
+              One HR workspace, two focused starting points.
             </h1>
 
             <div className="mt-10 rounded-[14px] border border-[#e5e5e5] bg-white p-4 shadow-[0_0_0_1px_rgba(10,10,10,0.1)]">

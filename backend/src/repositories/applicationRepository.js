@@ -172,6 +172,20 @@ export const applicationRepository = {
     return result.rows[0];
   },
 
+  updateStatusForRecruiter: async (id, recruiterId, status) => {
+    const result = await pool.query(
+      `UPDATE applications a
+       SET status = $1
+       FROM job_posts jp
+       WHERE a.job_post_id = jp.id
+         AND a.id = $2
+         AND jp.recruiter_id = $3
+       RETURNING a.*`,
+      [status, id, recruiterId]
+    );
+    return result.rows[0] || null;
+  },
+
   reject: async (id, reason, emailBody) => {
     const result = await pool.query(
       `UPDATE applications
@@ -185,12 +199,65 @@ export const applicationRepository = {
     return result.rows[0] || null;
   },
 
+  rejectForRecruiter: async (id, recruiterId, reason, emailBody) => {
+    const result = await pool.query(
+      `UPDATE applications a
+       SET status = 'rejected',
+           rejection_reason = $1,
+           rejection_email_body = $2
+       FROM job_posts jp
+       WHERE a.job_post_id = jp.id
+         AND a.id = $3
+         AND jp.recruiter_id = $4
+       RETURNING a.*`,
+      [reason, emailBody, id, recruiterId]
+    );
+    return result.rows[0] || null;
+  },
+
   updateRating: async (id, rating) => {
     const result = await pool.query(
       "UPDATE applications SET rating = $1 WHERE id = $2 RETURNING *",
       [rating, id]
     );
     return result.rows[0];
+  },
+
+  updateRatingForRecruiter: async (id, recruiterId, rating) => {
+    const result = await pool.query(
+      `UPDATE applications a
+       SET rating = $1
+       FROM job_posts jp
+       WHERE a.job_post_id = jp.id
+         AND a.id = $2
+         AND jp.recruiter_id = $3
+       RETURNING a.*`,
+      [rating, id, recruiterId]
+    );
+    return result.rows[0] || null;
+  },
+
+  acceptOfferForCandidate: async (id, candidateId) => {
+    const result = await pool.query(
+      `UPDATE applications
+       SET status = 'accepted'
+       WHERE id = $1 AND candidate_id = $2
+       RETURNING *`,
+      [id, candidateId]
+    );
+    return result.rows[0] || null;
+  },
+
+  declineOfferForCandidate: async (id, candidateId, reason) => {
+    const result = await pool.query(
+      `UPDATE applications
+       SET status = 'rejected',
+           rejection_reason = $1
+       WHERE id = $2 AND candidate_id = $3
+       RETURNING *`,
+      [reason || "Candidate declined the offer", id, candidateId]
+    );
+    return result.rows[0] || null;
   },
 
   addEvent: async (applicationId, actorId, type, title, description, metadata = {}) => {
@@ -209,12 +276,40 @@ export const applicationRepository = {
     return result.rows;
   },
 
+  getNotesForRecruiter: async (applicationId, recruiterId) => {
+    const result = await pool.query(
+      `SELECT an.*
+       FROM application_notes an
+       INNER JOIN applications a ON a.id = an.application_id
+       INNER JOIN job_posts jp ON jp.id = a.job_post_id
+       WHERE an.application_id = $1 AND jp.recruiter_id = $2
+       ORDER BY an.created_at DESC`,
+      [applicationId, recruiterId]
+    );
+    return result.rows;
+  },
+
   addNote: async (applicationId, recruiterId, note) => {
     const result = await pool.query(
       "INSERT INTO application_notes (application_id, recruiter_id, note) VALUES ($1, $2, $3) RETURNING *",
       [applicationId, recruiterId, note]
     );
     return result.rows[0];
+  },
+
+  addNoteForRecruiter: async (applicationId, recruiterId, note) => {
+    const result = await pool.query(
+      `INSERT INTO application_notes (application_id, recruiter_id, note)
+       SELECT $1, $2, $3
+       WHERE EXISTS (
+         SELECT 1 FROM applications a
+         INNER JOIN job_posts jp ON jp.id = a.job_post_id
+         WHERE a.id = $1 AND jp.recruiter_id = $2
+       )
+       RETURNING *`,
+      [applicationId, recruiterId, note]
+    );
+    return result.rows[0] || null;
   },
 
   updateNote: async (noteId, note) => {
@@ -225,8 +320,37 @@ export const applicationRepository = {
     return result.rows[0];
   },
 
+  updateNoteForRecruiter: async (noteId, recruiterId, note) => {
+    const result = await pool.query(
+      `UPDATE application_notes an
+       SET note = $1, updated_at = now()
+       FROM applications a
+       INNER JOIN job_posts jp ON jp.id = a.job_post_id
+       WHERE an.id = $2
+         AND an.application_id = a.id
+         AND jp.recruiter_id = $3
+       RETURNING an.*`,
+      [note, noteId, recruiterId]
+    );
+    return result.rows[0] || null;
+  },
+
   deleteNote: async (noteId) => {
     await pool.query("DELETE FROM application_notes WHERE id = $1", [noteId]);
+  },
+
+  deleteNoteForRecruiter: async (noteId, recruiterId) => {
+    const result = await pool.query(
+      `DELETE FROM application_notes an
+       USING applications a, job_posts jp
+       WHERE an.id = $1
+         AND an.application_id = a.id
+         AND a.job_post_id = jp.id
+         AND jp.recruiter_id = $2
+       RETURNING an.id`,
+      [noteId, recruiterId]
+    );
+    return result.rowCount > 0;
   },
 
   getEvents: async (applicationId) => {

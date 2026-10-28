@@ -48,6 +48,13 @@ export const authService = {
     const normalizedEmail = email.trim().toLowerCase();
     const displayName = name.trim();
 
+    const ALLOWED_SIGNUP_ROLES = new Set(["candidate", "recruiter"]);
+    if (!ALLOWED_SIGNUP_ROLES.has(role)) {
+      const error = new Error("Invalid role for registration. Only candidate and recruiter are permitted.");
+      error.status = 400;
+      throw error;
+    }
+
     const client = await pool.connect();
     try {
       await client.query("BEGIN");

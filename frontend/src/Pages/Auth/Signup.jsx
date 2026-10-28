@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaCheck, FaEye, FaEyeSlash, FaCheckCircle } from "react-icons/fa";
-import { FaBriefcase } from "react-icons/fa6";
-import { FaUserTie } from "react-icons/fa6";
-import { FaUserShield } from "react-icons/fa6";
-import { FaUserPen } from "react-icons/fa6";
+import { FaBriefcase, FaUserTie } from "react-icons/fa6";
 import { authApi } from "../../lib/api/index";
 import { showError } from "../../utils/toast";
 import { validateEmail } from "../../utils/validation";
@@ -25,32 +22,18 @@ const roleOptions = [
     description: "Post roles and manage candidates.",
     icon: FaBriefcase,
   },
-  {
-    role: "hr_manager",
-    title: "HR Manager",
-    description: "Approve jobs and monitor recruiter performance.",
-    icon: FaUserShield,
-  },
-  {
-    role: "interviewer",
-    title: "Interviewer",
-    description: "Evaluate candidates and submit feedback.",
-    icon: FaUserPen,
-  },
 ];
 
 const roleTitleMap = {
   candidate: "Start applying with Job Tracker",
   recruiter: "Start hiring with Job Tracker",
-  hr_manager: "Start managing with Job Tracker",
-  interviewer: "Start evaluating with Job Tracker",
 };
 
 const Signup = () => {
   const { t } = useI18n();
   const setAuth = useAuthStore((state) => state.setAuth);
   const location = useLocation();
-  const validRoles = ["candidate", "recruiter", "hr_manager", "interviewer"];
+  const validRoles = ["candidate", "recruiter"];
   const initialRole = validRoles.includes(location.state?.role) ? location.state.role : "candidate";
   const [userRole, setUserRole] = useState(initialRole);
   const [name, setName] = useState("");
@@ -124,9 +107,9 @@ const Signup = () => {
     <div className="min-h-screen blueprint-grid-bg px-4 py-8 text-[#0a0a0a]">
       <div className="mx-auto grid min-h-[calc(100vh-4rem)] max-w-6xl overflow-hidden rounded-[14px] border border-[#e5e5e5] bg-white shadow-[0_0_0_1px_rgba(10,10,10,0.1)] lg:grid-cols-[0.95fr_1.05fr]">
         <aside className="blueprint-hero-panel hidden rounded-none border-0 border-r border-[#e5e5e5] p-10 text-[#0a0a0a] lg:flex lg:flex-col lg:justify-between">
-          <Link to="/" className="inline-flex w-fit items-center gap-2 rounded-full px-3 py-2 text-sm font-medium text-[#737373] hover:bg-white hover:text-black">
+          <Link to="/" className="inline-flex w-fit items-center gap-2 rounded-full border border-neutral-300 bg-neutral-900 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-black hover:scale-[1.02] transition-all">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
-            Job Tracker
+            Back
           </Link>
 
           <div className="relative z-10">
@@ -143,7 +126,7 @@ const Signup = () => {
                   <p className="text-xs font-medium uppercase text-[#737373]">Active Roles</p>
                   <p className="mt-1 text-sm font-medium text-black">Build your team</p>
                 </div>
-                <span className="rounded-full bg-black px-3 py-1 text-xs font-medium text-white">4</span>
+                <span className="rounded-full bg-black px-3 py-1 text-xs font-medium text-white">2</span>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
@@ -174,9 +157,9 @@ const Signup = () => {
                 "Onboarding checklist",
                 "Employee and leave management",
               ].map((item) => (
-                <div key={item} className="flex items-center gap-3 rounded-[10px] border border-[#e5e5e5] bg-white/80 px-3 py-2 text-sm font-medium text-[#0a0a0a]">
-                  <FaCheckCircle className="text-black" />
-                  {item}
+                <div key={item} className="flex items-center gap-3 rounded-[10px] border border-[#d4d4d4] bg-neutral-900 px-4 py-3 text-sm font-medium text-neutral-100 shadow-sm">
+                  <FaCheckCircle className="shrink-0 text-white" />
+                  <span>{item}</span>
                 </div>
               ))}
             </div>

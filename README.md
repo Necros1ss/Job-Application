@@ -225,7 +225,7 @@ Important tables include:
 
 ```bash
 git clone <your-repository-url>
-cd HR-Management
+cd Job-Application
 ```
 
 ### **2. Install dependencies**
