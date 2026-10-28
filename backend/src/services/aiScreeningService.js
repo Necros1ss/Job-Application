@@ -55,12 +55,23 @@ const getGeminiClient = () => {
   return new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 };
 
-const resolveCvPath = (fileName) => {
-  if (!fileName || path.basename(fileName) !== fileName) {
-    return null;
+const resolveCvPath = (fileName, cvFilePath) => {
+  // 1. Nếu có đường dẫn file trực tiếp và tồn tại trên disk
+  if (cvFilePath) {
+    const directPath = path.resolve(cvFilePath);
+    try {
+      const stat = fs.statSync?.(directPath) || true;
+      return directPath;
+    } catch {
+      // Bỏ qua nếu không tồn tại trực tiếp
+    }
   }
 
-  const resolvedPath = path.resolve(CV_UPLOAD_DIR, fileName);
+  // 2. Tìm trong thư mục upload CV
+  const candidateName = fileName ? path.basename(fileName) : (cvFilePath ? path.basename(cvFilePath) : null);
+  if (!candidateName) return null;
+
+  const resolvedPath = path.resolve(CV_UPLOAD_DIR, candidateName);
   const uploadRoot = `${CV_UPLOAD_DIR}${path.sep}`;
   return resolvedPath.startsWith(uploadRoot) ? resolvedPath : null;
 };
@@ -72,14 +83,19 @@ const normalizeText = (value) =>
     .replace(/\n{3,}/g, "\n\n")
     .trim();
 
-const extractCvText = async ({ fileName, mimeType }) => {
-  const filePath = resolveCvPath(fileName);
+const extractCvText = async ({ fileName, cvFilePath, mimeType }) => {
+  const filePath = resolveCvPath(fileName, cvFilePath);
 
   if (!filePath) {
     throw createHttpError(404, "CV file not found");
   }
 
-  const buffer = await fs.readFile(filePath);
+  let buffer;
+  try {
+    buffer = await fs.readFile(filePath);
+  } catch (err) {
+    throw createHttpError(404, `CV file could not be read: ${err.message}`);
+  }
   const extension = path.extname(fileName).toLowerCase();
 
   if (extension === ".pdf" || mimeType === "application/pdf") {
@@ -166,12 +182,14 @@ const parseScreeningResult = (response) => {
 };
 
 export const analyzeApplication = async (application) => {
-  if (!application?.cv_file_name) {
+  const fileName = application?.cv_file_name || (application?.cv_file_path ? path.basename(application.cv_file_path) : null);
+  if (!fileName && !application?.cv_file_path) {
     throw createHttpError(400, "This application does not have a CV file");
   }
 
   const cvText = await extractCvText({
-    fileName: application.cv_file_name,
+    fileName,
+    cvFilePath: application.cv_file_path,
     mimeType: application.cv_mime_type,
   });
 

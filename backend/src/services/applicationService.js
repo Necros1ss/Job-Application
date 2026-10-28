@@ -17,12 +17,43 @@ const allowedCvMimeTypes = new Set([
   "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
 ]);
 
+export const sanitizeCvFilename = (originalName = "cv.pdf") => {
+  let fixed = originalName;
+  try {
+    fixed = Buffer.from(originalName, "latin1").toString("utf8");
+  } catch {
+    fixed = originalName;
+  }
+
+  const ext = path.extname(fixed) || ".pdf";
+  const base = path.basename(fixed, ext);
+
+  const cleanBase = base
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/đ/g, "d")
+    .replace(/Đ/g, "D")
+    .replace(/[^a-zA-Z0-9_-]/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_|_$/g, "") || "cv";
+
+  return `${cleanBase}${ext.toLowerCase()}`;
+};
+
+export const getCleanDisplayName = (originalName = "cv.pdf") => {
+  try {
+    return Buffer.from(originalName, "latin1").toString("utf8");
+  } catch {
+    return originalName;
+  }
+};
+
 export const uploadCv = multer({
   storage: multer.diskStorage({
     destination: (_req, _file, cb) => cb(null, uploadRoot),
     filename: (_req, file, cb) => {
-      const safeOriginalName = file.originalname.replace(/[^a-zA-Z0-9._-]/g, "_");
-      cb(null, `${Date.now()}_${safeOriginalName}`);
+      const safeName = sanitizeCvFilename(file.originalname);
+      cb(null, `${Date.now()}_${safeName}`);
     },
   }),
   limits: {
@@ -121,12 +152,13 @@ export const applicationService = {
 
   applyForJob: async (candidateId, { jobId, jobPostId, coverLetter }, cvFile) => {
     const normalizedJobPostId = jobPostId || jobId;
+    const displayName = getCleanDisplayName(cvFile.originalname);
     const application = await applicationRepository.create(
       candidateId, 
       normalizedJobPostId, 
       {
         path: cvFile.path,
-        name: cvFile.originalname,
+        name: displayName,
         mimetype: cvFile.mimetype,
         size: cvFile.size
       }, 
@@ -140,6 +172,23 @@ export const applicationService = {
       "Job Applied",
       "Candidate submitted a new application"
     );
+
+    // Tự động phân tích AI ngay khi nộp CV (Background AI Screening)
+    try {
+      const fullApplication = await applicationRepository.findById(application.id);
+      if (fullApplication) {
+        // Cho chạy không await để không làm chậm response của candidate
+        analyzeApplication(fullApplication)
+          .then((aiResult) => {
+            return applicationRepository.updateAiScreening(application.id, aiResult);
+          })
+          .catch((aiErr) => {
+            console.error(`Background AI screening failed for app #${application.id}:`, aiErr.message);
+          });
+      }
+    } catch (bgErr) {
+      console.error("Failed to trigger background AI screening:", bgErr.message);
+    }
 
     return application;
   },

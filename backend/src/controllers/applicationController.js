@@ -1,6 +1,13 @@
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import { applicationService } from "../services/applicationService.js";
 import { successResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const CV_UPLOAD_DIR = path.resolve(__dirname, "../../uploads/cv");
 
 const setNotFoundStatus = (error) => {
   if (error.message === "Application not found" || error.message.includes("not found")) {
@@ -150,13 +157,29 @@ export const downloadCv = asyncHandler(async (req, res) => {
     .getApplicationForRecruiter(req.params.id, req.user.id)
     .catch(setNotFoundStatus);
 
-  if (!application.cv_file_path) {
+  if (!application.cv_file_path && !application.cv_file_name) {
     const error = new Error("CV file not found");
     error.status = 404;
     throw error;
   }
 
-  return res.download(application.cv_file_path, application.cv_file_name || "cv");
+  // Thử tìm file theo cv_file_path đã lưu
+  let targetPath = application.cv_file_path;
+  if (!targetPath || !fs.existsSync(targetPath)) {
+    // Fallback: Tìm trong thư mục upload theo basename
+    const fallbackPath = path.resolve(CV_UPLOAD_DIR, path.basename(application.cv_file_path || application.cv_file_name || ""));
+    if (fs.existsSync(fallbackPath)) {
+      targetPath = fallbackPath;
+    }
+  }
+
+  if (!targetPath || !fs.existsSync(targetPath)) {
+    const error = new Error("CV file does not exist on disk");
+    error.status = 404;
+    throw error;
+  }
+
+  return res.download(targetPath, application.cv_file_name || "cv.pdf");
 });
 
 export const getApplications = listForCandidate;

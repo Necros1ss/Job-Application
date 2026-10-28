@@ -157,12 +157,36 @@ const ApplicationDetail = ({ onBack, candidate }) => {
         try {
           const screening = await applicationsApi.getAiScreening(candidate.id);
           if (isMounted) {
-            setAiScreening(screening);
+            if (screening && (screening.score !== null || screening.recommendation)) {
+              setAiScreening(screening);
+            } else if (response?.aiScore !== null && response?.aiScore !== undefined) {
+              setAiScreening({
+                score: response.aiScore,
+                recommendation: response.aiRecommendation || 'maybe',
+                summary: response.aiSummary || '',
+                strengths: Array.isArray(response.aiStrengths) ? response.aiStrengths : [],
+                weaknesses: Array.isArray(response.aiWeaknesses) ? response.aiWeaknesses : [],
+                screenedAt: response.aiScreenedAt,
+              });
+            } else {
+              setAiScreening(null);
+            }
             setAiError('');
           }
         } catch {
           if (isMounted) {
-            setAiScreening(null);
+            if (response?.aiScore !== null && response?.aiScore !== undefined) {
+              setAiScreening({
+                score: response.aiScore,
+                recommendation: response.aiRecommendation || 'maybe',
+                summary: response.aiSummary || '',
+                strengths: Array.isArray(response.aiStrengths) ? response.aiStrengths : [],
+                weaknesses: Array.isArray(response.aiWeaknesses) ? response.aiWeaknesses : [],
+                screenedAt: response.aiScreenedAt,
+              });
+            } else {
+              setAiScreening(null);
+            }
             setAiError('');
           }
         }
