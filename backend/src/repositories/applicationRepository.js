@@ -25,13 +25,14 @@ export const applicationRepository = {
     return result.rows;
   },
 
-  findForRecruiter: async (recruiterId, { page = 1, limit = 10, jobPostId } = {}) => {
+  findForRecruiter: async (recruiterId, { page = 1, limit = 10, jobPostId, sortBy = "applied_at", sortOrder = "desc" } = {}) => {
     const offset = (page - 1) * limit;
     let query = `
-      SELECT a.*, c.name as candidate_name, c.email as candidate_email, j.title as job_title
+      SELECT a.*, c.name as candidate_name, c.email as candidate_email, c.phone as candidate_phone, j.title as job_title, r.company_name
       FROM applications a
       JOIN candidates c ON a.candidate_id = c.id
       JOIN job_posts j ON a.job_post_id = j.id
+      JOIN recruiters r ON j.recruiter_id = r.id
       WHERE j.recruiter_id = $1
     `;
     const params = [recruiterId];
@@ -41,11 +42,59 @@ export const applicationRepository = {
       params.push(jobPostId);
     }
 
-    query += ` ORDER BY a.applied_at DESC LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
+    const orderDirection = String(sortOrder).toLowerCase() === "asc" ? "ASC" : "DESC";
+    let orderByClause = "ORDER BY a.applied_at DESC";
+
+    if (sortBy === "ai_score") {
+      orderByClause = `ORDER BY a.ai_score ${orderDirection} NULLS LAST, a.applied_at DESC`;
+    } else {
+      orderByClause = `ORDER BY a.applied_at ${orderDirection}`;
+    }
+
+    query += ` ${orderByClause} LIMIT $${params.length + 1} OFFSET $${params.length + 2}`;
     params.push(limit, offset);
 
     const result = await pool.query(query, params);
     return result.rows;
+  },
+
+  updateAiScreening: async (id, { score, recommendation, summary, strengths, weaknesses }) => {
+    const result = await pool.query(
+      `UPDATE applications
+       SET ai_score = $1,
+           ai_recommendation = $2,
+           ai_summary = $3,
+           ai_strengths = $4,
+           ai_weaknesses = $5,
+           ai_screened_at = now()
+       WHERE id = $6
+       RETURNING *`,
+      [
+        score,
+        recommendation,
+        summary,
+        JSON.stringify(strengths || []),
+        JSON.stringify(weaknesses || []),
+        id,
+      ]
+    );
+    return result.rows[0] || null;
+  },
+
+  getAiScreening: async (id) => {
+    const result = await pool.query(
+      `SELECT
+          ai_score AS score,
+          ai_recommendation AS recommendation,
+          ai_summary AS summary,
+          ai_strengths AS strengths,
+          ai_weaknesses AS weaknesses,
+          ai_screened_at AS screened_at
+       FROM applications
+       WHERE id = $1`,
+      [id]
+    );
+    return result.rows[0] || null;
   },
 
   getRecruiterActivity: async (recruiterId, limit = 20) => {

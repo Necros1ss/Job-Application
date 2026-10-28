@@ -49,8 +49,24 @@ export const applicationService = {
     const applications = await applicationRepository.findForRecruiter(recruiterId, options);
     const total = await applicationRepository.countForRecruiter(recruiterId, options.jobPostId);
     
+    const formatted = applications.map((row) => ({
+      ...row,
+      candidateName: row.candidate_name,
+      candidateEmail: row.candidate_email,
+      candidatePhone: row.candidate_phone,
+      jobTitle: row.job_title,
+      companyName: row.company_name,
+      applicationDate: row.applied_at,
+      aiScore: row.ai_score,
+      aiRecommendation: row.ai_recommendation,
+      aiSummary: row.ai_summary,
+      aiStrengths: row.ai_strengths,
+      aiWeaknesses: row.ai_weaknesses,
+      aiScreenedAt: row.ai_screened_at,
+    }));
+
     return {
-      data: applications,
+      data: formatted,
       total,
       page: options.page,
       limit: options.limit,
@@ -239,14 +255,17 @@ export const applicationService = {
     return true;
   },
 
-  getAiScreening: async () => {
-    // TODO: Persist AI screening results in a dedicated table or JSONB column.
-    return null;
+  getAiScreening: async (id, recruiterId) => {
+    const application = await applicationRepository.findByIdForRecruiter(id, recruiterId);
+    if (!application) throw new Error("Application not found");
+    return await applicationRepository.getAiScreening(id);
   },
 
   analyzeAiScreening: async (id, recruiterId) => {
     const application = await applicationRepository.findByIdForRecruiter(id, recruiterId);
     if (!application) throw new Error("Application not found");
-    return await analyzeApplication(application);
+    const aiResult = await analyzeApplication(application);
+    await applicationRepository.updateAiScreening(id, aiResult);
+    return aiResult;
   },
 };

@@ -55,6 +55,9 @@ const toDisplayRow = (row) => {
     noteCount: row.noteCount || 0,
     aiScore: row.aiScore ?? null,
     aiRecommendation: row.aiRecommendation || '',
+    aiSummary: row.aiSummary || '',
+    aiStrengths: Array.isArray(row.aiStrengths) ? row.aiStrengths : [],
+    aiWeaknesses: Array.isArray(row.aiWeaknesses) ? row.aiWeaknesses : [],
     aiScreenedAt: row.aiScreenedAt || null,
     ref: `APP-${String(row.id).padStart(5, '0')}`,
     jobTitle: row.jobTitle || 'Unknown Position',
@@ -78,6 +81,7 @@ const Application = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [jobOptions, setJobOptions] = useState([]);
   const [selectedJobId, setSelectedJobId] = useState('all');
+  const [sortBy, setSortBy] = useState('applied_at');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [viewMode, setViewMode] = useState("list");
@@ -95,6 +99,8 @@ const Application = () => {
             page: currentPage,
             limit: PAGE_SIZE,
             jobPostId: selectedJobId,
+            sortBy: sortBy,
+            sortOrder: 'desc',
           }),
           jobPostsApi.listMine(),
         ]);
@@ -138,10 +144,15 @@ const Application = () => {
     return () => {
       isMounted = false;
     };
-  }, [currentPage, selectedJobId]);
+  }, [currentPage, selectedJobId, sortBy]);
 
   const filteredApplications = useMemo(() => {
     return [...applications].sort((a, b) => {
+      if (sortBy === 'ai_score') {
+        const scoreA = a.aiScore ?? -1;
+        const scoreB = b.aiScore ?? -1;
+        if (scoreB !== scoreA) return scoreB - scoreA;
+      }
       if (selectedJobId === 'all') {
         const titleCompare = (a.jobTitle || '').localeCompare(b.jobTitle || '');
         if (titleCompare !== 0) return titleCompare;
@@ -149,11 +160,11 @@ const Application = () => {
 
       return new Date(b.applicationDate).getTime() - new Date(a.applicationDate).getTime();
     });
-  }, [applications, selectedJobId]);
+  }, [applications, selectedJobId, sortBy]);
 
   useEffect(() => {
     setCurrentPage(1);
-  }, [selectedJobId]);
+  }, [selectedJobId, sortBy]);
 
   const displayApplications = useMemo(
     () => filteredApplications.map(toDisplayRow),
@@ -257,7 +268,7 @@ const Application = () => {
 
         {/* Toolbar (Filters & View Toggle) */}
         <div className="flex justify-between items-center mb-6">
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <div className="flex items-center gap-3 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)]">
               <span>Active Job:</span>
               <select
@@ -271,6 +282,18 @@ const Application = () => {
                     {job.title}
                   </option>
                 ))}
+              </select>
+            </div>
+
+            <div className="flex items-center gap-3 rounded-lg border border-[var(--border-primary)] bg-[var(--bg-elevated)] px-4 py-2 text-sm font-medium text-[var(--text-secondary)]">
+              <span>Sort By:</span>
+              <select
+                value={sortBy}
+                onChange={(event) => setSortBy(event.target.value)}
+                className="cursor-pointer bg-transparent font-semibold text-[var(--text-primary)] outline-none"
+              >
+                <option value="applied_at">Newest First</option>
+                <option value="ai_score">AI Match Score (High to Low)</option>
               </select>
             </div>
           </div>
@@ -434,6 +457,28 @@ const Application = () => {
                         {app.matchScore}%
                       </span>
                     </div>
+
+                    {/* Điểm mạnh & Điểm yếu tóm tắt từ AI */}
+                    {(app.aiStrengths?.length > 0 || app.aiWeaknesses?.length > 0) && (
+                      <div className="mt-2 text-xs space-y-1 max-w-xs">
+                        {app.aiStrengths?.length > 0 && (
+                          <div className="flex items-start gap-1 text-emerald-700">
+                            <span className="font-bold shrink-0">✓</span>
+                            <span className="line-clamp-1 truncate" title={app.aiStrengths[0]}>
+                              {app.aiStrengths[0]}
+                            </span>
+                          </div>
+                        )}
+                        {app.aiWeaknesses?.length > 0 && (
+                          <div className="flex items-start gap-1 text-amber-700">
+                            <span className="font-bold shrink-0">!</span>
+                            <span className="line-clamp-1 truncate" title={app.aiWeaknesses[0]}>
+                              {app.aiWeaknesses[0]}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </td>
 
                   {/* Cột 5: Hành động */}

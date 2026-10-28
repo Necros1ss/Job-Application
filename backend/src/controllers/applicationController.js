@@ -18,7 +18,9 @@ export const listForRecruiter = asyncHandler(async (req, res) => {
   const options = {
     page: parseInt(req.query.page) || 1,
     limit: parseInt(req.query.limit) || 10,
-    jobPostId: req.query.jobPostId
+    jobPostId: req.query.jobPostId,
+    sortBy: req.query.sortBy || "applied_at",
+    sortOrder: req.query.sortOrder || "desc",
   };
   const result = await applicationService.getRecruiterApplications(req.user.id, options);
   return res.json(successResponse(result));
@@ -129,8 +131,10 @@ export const declineOffer = asyncHandler(async (req, res) => {
   return res.json(successResponse(application, "Offer declined successfully"));
 });
 
-export const getAiScreening = asyncHandler(async (_req, res) => {
-  const screening = await applicationService.getAiScreening();
+export const getAiScreening = asyncHandler(async (req, res) => {
+  const screening = await applicationService
+    .getAiScreening(req.params.id, req.user.id)
+    .catch(setNotFoundStatus);
   return res.json(successResponse(screening));
 });
 

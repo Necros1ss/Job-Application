@@ -6,7 +6,7 @@ export const applicationsApi = {
     const response = await request("/applications/recruiter");
     return Array.isArray(response) ? response : response.data || [];
   },
-  listForRecruiterPaginated: ({ page = 1, limit = 10, jobPostId = "" } = {}) => {
+  listForRecruiterPaginated: ({ page = 1, limit = 10, jobPostId = "", sortBy = "applied_at", sortOrder = "desc" } = {}) => {
     const params = new URLSearchParams({
       page: String(page),
       limit: String(limit),
@@ -14,6 +14,13 @@ export const applicationsApi = {
 
     if (jobPostId && jobPostId !== "all") {
       params.set("jobPostId", String(jobPostId));
+    }
+
+    if (sortBy) {
+      params.set("sortBy", String(sortBy));
+    }
+    if (sortOrder) {
+      params.set("sortOrder", String(sortOrder));
     }
 
     return request(`/applications/recruiter?${params.toString()}`);
