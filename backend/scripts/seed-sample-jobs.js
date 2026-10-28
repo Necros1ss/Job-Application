@@ -100,8 +100,8 @@ async function seedSampleData() {
         await client.query(
           `INSERT INTO job_posts (
             recruiter_id, title, description, responsibilities, requirements,
-            experience, location, salary, employment_type, is_active
-          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, true)`,
+            experience, location, salary, employment_type, status
+          ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, 'active')`,
           [
             recruiterId,
             job.title,
