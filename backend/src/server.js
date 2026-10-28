@@ -30,6 +30,11 @@ dotenv.config({ path: path.resolve(__dirname, "../.env") });
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+// Khi chạy sau Reverse Proxy của Render/Heroku/Nginx, cần trust proxy để express-rate-limit nhận đúng IP client
+if (process.env.NODE_ENV === "production" || process.env.TRUST_PROXY === "true") {
+  app.set("trust proxy", 1);
+}
 const rateLimitWindowMs = Number(process.env.RATE_LIMIT_WINDOW_MS) || 15 * 60 * 1000;
 const rateLimitMax = Number(process.env.RATE_LIMIT_MAX) || 100;
 
