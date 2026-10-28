@@ -97,6 +97,23 @@ export const applicationService = {
     if (!application) throw new Error("Application not found");
     return {
       ...application,
+      candidateId: application.candidate_id,
+      candidateName: application.candidate_name,
+      candidateEmail: application.candidate_email,
+      candidatePhone: application.candidate_phone,
+      candidateSkills: application.candidate_skills,
+      candidateExperience: application.candidate_experience,
+      jobTitle: application.job_title,
+      companyName: application.company_name,
+      applicationDate: application.applied_at,
+      cvFileName: application.cv_file_name,
+      cvFilePath: application.cv_file_path,
+      aiScore: application.ai_score,
+      aiRecommendation: application.ai_recommendation,
+      aiSummary: application.ai_summary,
+      aiStrengths: application.ai_strengths,
+      aiWeaknesses: application.ai_weaknesses,
+      aiScreenedAt: application.ai_screened_at,
       notes: await applicationRepository.getNotes(id),
       events: await applicationRepository.getEvents(id),
     };
