@@ -82,7 +82,7 @@ async function seedSampleData() {
     const recruiterId = userRes.rows[0].id;
 
     await client.query(
-      `INSERT INTO recruiters (id, company_name, email, location, industry, company_description)
+      `INSERT INTO recruiters (id, company_name, email, address, industry, description)
        VALUES ($1, 'TechNova Solutions', $2, 'Ho Chi Minh City', 'Software & IT', 'Công ty công nghệ hàng đầu chuyên cung cấp giải pháp nhân sự số hóa.')
        ON CONFLICT (id) DO UPDATE SET company_name = EXCLUDED.company_name`,
       [recruiterId, recruiterEmail]
