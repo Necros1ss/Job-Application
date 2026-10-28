@@ -182,3 +182,7 @@ if (isMain && process.env.NODE_ENV !== "test") {
     process.exit(1);
   });
 }
+
+app.get("/", (_req, res) => {
+  res.json({ message: "Job Application API is running!" });
+});
