@@ -167,6 +167,19 @@ const startServer = async () => {
   }
 
   await testDbConnection();
+
+  if (process.env.AUTO_MIGRATE === "true" || process.env.NODE_ENV === "production") {
+    try {
+      const { execSync } = await import("child_process");
+      logger.info("Running automatic database migrations and seed...");
+      execSync("node scripts/migrate.js", { stdio: "inherit" });
+      execSync("node scripts/seed-sample-jobs.js", { stdio: "inherit" });
+      logger.info("Automatic database migrations and seed completed.");
+    } catch (migrateErr) {
+      logger.warn(`Migration/Seed step encountered an error: ${migrateErr.message}`);
+    }
+  }
+
   app.listen(port, () => {
     logger.info(`API server running on http://localhost:${port}`);
   });
